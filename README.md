@@ -49,7 +49,7 @@ Embeddings are a powerful technique used to convert raw data—like text, images
   - After embedding we will need a place to store the vector. A few data store options include Azure AI Search, MongoDB, Redis Enterprise 
   - When configuring the data store we need to ensure that the vector field dimensions are set to the output dimensions of our model
 
-## Retrieval Augmented Generation (RAG) / Bring Your Own Data (BYOD)
+## Retrieval Augmented Generation (RAG) / Bring Your Own Data (BYOD) Overview
 
 The RAG pattern involves integrating a retrieval component with a generative model, such as GPT. This approach enables the model to pull relevant information from a predefined dataset or knowledge base before generating a response. By querying external data in real-time, the model can provide more accurate, informed, and contextually relevant outputs. The "bring your own data" aspect allows users to customize the external datasets according to their specific needs, thus grounding the model's responses in targeted, relevant information. This methodology not only improves the quality of the responses but also enhances the model’s ability to handle specific topics or detailed queries beyond its initial training data.
 

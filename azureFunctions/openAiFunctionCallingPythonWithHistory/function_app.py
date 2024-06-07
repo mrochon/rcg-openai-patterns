@@ -34,17 +34,6 @@ client = AzureOpenAI(
     api_version=api_version,
 )
 
-
-def get_stock_price(symbol):
-    """Get the current stock information for a given stock symbol. Only Stock symbol supported is IBM"""
-    url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey=demo"
-
-    r = requests.get(url)
-    data = r.json()
-    # return data as string
-    return json.dumps(data)
-
-
 def get_good_emails(howMany=1, file_path="./emailsGood.jsonl"):
     """Get good and high quality email examples that have been used in the past"""
     emails = []
@@ -61,7 +50,7 @@ def get_good_emails(howMany=1, file_path="./emailsGood.jsonl"):
     selected_contents = [email["content"][0] for email in selected_emails]
 
     # Return the selected emails in the required format
-    return json.dumps({"goodEmails": selected_contents})
+    return str(json.dumps({"goodEmails": selected_contents}))
 
 
 def get_bad_emails(howMany=1, file_path="./emailsBad.jsonl"):
@@ -80,7 +69,7 @@ def get_bad_emails(howMany=1, file_path="./emailsBad.jsonl"):
     selected_contents = [email["content"][0] for email in selected_emails]
 
     # Return the selected emails in the required format
-    return json.dumps({"goodEmails": selected_contents})
+    return str(json.dumps({"badEmails": selected_contents}))
 
 
 def read_system_prompt(file_path="systemPrompt.txt"):
@@ -89,17 +78,23 @@ def read_system_prompt(file_path="systemPrompt.txt"):
         return file.read().strip()
 
 
-def get_conversation_history(aadObjectId, limit=5):
+def get_conversation_history(aadObjectId, limit=3):
+   
     query = "SELECT * FROM c WHERE c.aadObjectId = @aadObjectId ORDER BY c._ts DESC OFFSET 0 LIMIT @limit"
     parameters = [
         {"name": "@aadObjectId", "value": aadObjectId},
         {"name": "@limit", "value": limit},
     ]
-    items = list(
-        container.query_items(
-            query=query, parameters=parameters, enable_cross_partition_query=True
+    
+    try:
+        items = list(
+            container.query_items(
+                query=query, parameters=parameters, enable_cross_partition_query=True
+            )
         )
-    )
+    except Exception as e:
+        print(f'query_items failed error {e}')
+    
     history = []
     for item in items:
         history.append({"role": "user", "content": item.get("question")})
@@ -124,12 +119,13 @@ def store_conversation(aadObjectId, question, answer):
         "id": str(uuid.uuid4()),  # Unique identifier for the item
         "aadObjectId": aadObjectId,
         "question": question,
-        "answer": answer,
+        "answer": str(answer),
     }
 
     try:
         container.upsert_item(item)
         logging.info("Item upserted successfully.")
+        
     except Exception as e:
         logging.error(f"An error occurred while upserting the item: {e}")
 
@@ -159,6 +155,7 @@ def run_conversation(user_message, aadObjectId):
 
     # Retrieve and append conversation history
     conversation_history = get_conversation_history(aadObjectId)
+    
     # reverse the conversation history to get the last user message
     conversation_history.reverse()
     
@@ -172,7 +169,6 @@ def run_conversation(user_message, aadObjectId):
         }
     )
     
-    print(messages)
 
     response = client.chat.completions.create(
         model=deployment,
@@ -192,42 +188,48 @@ def run_conversation(user_message, aadObjectId):
         # Step 3: call the function
         # Note: the JSON response may not always be valid; be sure to handle errors
         available_functions = {
-            "get_stock_price": get_stock_price,
             "get_good_emails": get_good_emails,
-            "get_bad_emails": get_bad_emails,
-        }  # only one function in this example, but you can have multiple
+            "get_bad_emails": get_bad_emails
+        }
+        
         messages.append(response_message)  # extend conversation with assistant's reply
         # Step 4: send the info for each function call and function response to the model
         for tool_call in tool_calls:
             function_name = tool_call.function.name
             function_to_call = available_functions[function_name]
             function_args = json.loads(tool_call.function.arguments)
-            function_response = function_to_call(**function_args)
-            messages.append(
-                {
-                    "tool_call_id": tool_call.id,
-                    "role": "tool",
-                    "name": function_name,
-                    "content": function_response,
-                }
-            )
-            print("messages-------------------")
-            print(messages)
-            print("-------------------messages")
+            try:
+                function_response = function_to_call(**function_args)
+                messages.append(
+                    {
+                        "tool_call_id": tool_call.id,
+                        "role": "tool",
+                        "name": function_name,
+                        "content": function_response,
+                    }
+                )
+            except Exception as e:
+                logging.error(f'Exception occured during the {function_name} function call \n{e}')
+                
+            # print("messages-------------------")
+            # print(f'===== HERE IS THE messages ========\n{messages}')
+            # # print(messages)
+            # print("-------------------messages")
             # extend conversation with function response
         second_response = client.chat.completions.create(
             model=deployment,
             messages=messages,
         )  # get a new response from the model where it can see the function response
         return second_response.choices[0].message.content
-
-    return response_message.content
-
-
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+    
+    else:
+        return response_message.content
 
 
-@app.route(route="chat")
+app = func.FunctionApp()
+
+
+@app.route(route="chat", auth_level=func.AuthLevel.FUNCTION)
 def chat(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Python HTTP trigger function processed a request.")
 
@@ -235,6 +237,7 @@ def chat(req: func.HttpRequest) -> func.HttpResponse:
         req_body = req.get_json()
         aadObjectId = req_body.get("aadObjectId")
         question = req_body.get("question")
+        
         if not question:
             return func.HttpResponse(
                 "Invalid request body. 'question' is required.", status_code=400

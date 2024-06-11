@@ -10,24 +10,27 @@ load_dotenv(override=True)
 
 # connect to MongoDB
 client = pymongo.MongoClient(os.environ.get("MONGO_DB_CONNECTION_STRING"), tlsAllowInvalidCertificates=True)
-db = client.get_database("test")
+db = client.get_database("myVectorDatabase")
 
 # drop the collection if it exists
-# if "vectors" in db.list_collection_names():
-#     db.get_collection("vectors").drop()
+if "vectors" in db.list_collection_names():
+    db.get_collection("vectors").drop()
 
 # create a new collection if it doesnt exist
 if "vectors" not in db.list_collection_names():
     db.create_collection("vectors")
-    
-    
+
 
 collection = db.get_collection("vectors")
 
 # test connection string
+print()
+print("------ All Databases ------")
 print(client.list_database_names())
 
 # print all the collections in the database
+print()
+print("------ All Collections ------")
 print(db.list_collection_names())
 
 collection = db.get_collection("vectors")
@@ -50,14 +53,13 @@ create_vector_index = {
     ]
 }
 
-# delete vector index
-# collection.drop_index("vectors")
-
 # # Create the vector index if it doesn't exist
 if "vector_index" not in collection.index_information():
     collection.create_indexes([pymongo.IndexModel(**create_vector_index['indexes'][0])])
 
 # print all indexes
+print()
+print("----------------- Create vector index in MongoDB -----------------")
 print(collection.index_information())
 
 # ----------------- Embedding the Data -----------------
@@ -84,14 +86,18 @@ payload = json.dumps({
 response = requests.post(url, headers=headers, data=payload)
 
 embedding = response.json()["data"][0]["embedding"]
+print()
+print("----------------- Embedding Vector Stored In Cosmos -----------------")
+print(embedding)
 
 # ----------------- Store In Mongo -----------------
 
 document = {"text": "The food was delicious and the waiter was very friendly.", "vector_field": embedding}
 collection.insert_one(document)
-print("Stored embedding in MongoDB ivf index")
-print(collection.index_information())
 
+print()
+print("----------------- Stored embedding in MongoDB -----------------")
+print(collection.index_information())
 
 
 # ----------------- Embedding the Query (user question that will be used to match with docs in Mongo) -----------------
@@ -102,6 +108,10 @@ payload2 = json.dumps({
 # Make the POST request to get an embedding for the query
 response2 = requests.post(url, headers=headers, data=payload2)
 query_vector = response2.json()["data"][0]["embedding"]
+
+print()
+print("----------------- Embedding Vector Used to Search Cosmos -----------------")
+print(query_vector)
 
 # ----------------- Execute Query Against Mongo -----------------
 
@@ -130,6 +140,18 @@ pipeline = [
 # Execute the search
 results = collection.aggregate(pipeline)
 
-# Print results
+# ----------------- Cleaned up Output -----------------
+print()
+print("----------------- Output -----------------")
+# print the payload with the input text
+print("Payload Stored in Cosmos:")
+print(payload)
+print()
+# print payload2 with the input text
+print("Payload Used For Query:")
+print(payload2)
+print()
+print("Vector Search Result:")
+# print text and score.
 for document in results:
-    print(document)
+    print(f"Text: {document['text']}, Score: {document['score']}")

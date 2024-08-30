@@ -8,7 +8,7 @@ When delving into the world of OpenAI, there are two fundamental concepts that a
 
 - Chat Completion / General LLM: This refers to the use of large language models (LLM) like GPT (Generative Pre-trained Transformer) for generating text.
 
-- Embeddings: The process of converting data, such as text or images, into a vector format. 
+- Embeddings: The process of converting data, such as text or images, into a vector (numeric) format. 
 
 
 ### GPT Models (LLM's)

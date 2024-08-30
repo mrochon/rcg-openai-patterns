@@ -3,4 +3,3 @@ pymongo
 python-dotenv
 azure-storage-blob
 openai
-python-dotenv

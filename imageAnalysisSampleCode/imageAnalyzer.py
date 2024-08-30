@@ -57,7 +57,7 @@ def send_image_to_openai(image_path, system_prompt):
 
         # Make the API request
         response = client.chat.completions.create(
-            model=os.getenv("AZURE_OPENAI_MODEL"),
+            model=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME"),
             # temperature=float(os.environ.get("CHART_PROCESSOR_TEMPERATURE")), # if needed you can set the temperature and top_p from the environment variables
             # top_p=float(os.environ.get("CHART_PROCESSOR_P")),
             messages=[

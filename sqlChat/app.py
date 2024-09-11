@@ -12,10 +12,7 @@ import datetime
 
 # Only load the settings if they are running local and not in Azure
 if os.getenv("WEBSITE_SITE_NAME") is None:
-    env_path = (
-        "/Users/arkadiuszbar/Documents/projects/openai/myHackathon/module1/sql/.env"
-    )
-    load_dotenv(dotenv_path=env_path)
+    load_dotenv()
 
 
 def load_setting(setting_name, session_name, default_value=""):

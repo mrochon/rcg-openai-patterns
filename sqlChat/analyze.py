@@ -13,6 +13,12 @@ from sqlalchemy import create_engine
 import sqlalchemy as sql
 from plotly.graph_objects import Figure
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
+
+db_name = os.getenv("DB_NAME")
+db_connection = os.getenv("CONNECTION_STRING")
 
 
 def get_table_schema(sql_query_tool, db_schema=None):
@@ -20,7 +26,7 @@ def get_table_schema(sql_query_tool, db_schema=None):
 
     sql_query = f"""  
     SELECT TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE
-FROM SampleDB.INFORMATION_SCHEMA.COLUMNS 
+FROM {db_name}.INFORMATION_SCHEMA.COLUMNS 
 WHERE TABLE_SCHEMA = 'dbo';
     """
 
@@ -160,7 +166,7 @@ class SQL_Query(ChatGPT_Handler):
         self.db_warehouse = db_warehouse
 
     def execute_sql_query(self, query, limit=10000):
-        connection_string = "mssql+pyodbc://arekbaradmin:Ss25315864!@sql-server-5gk2vznbtfi2o.database.windows.net:1433/SampleDB?driver=ODBC+Driver+17+for+SQL+Server&Encrypt=yes&TrustServerCertificate=no"
+        connection_string = db_connection
         engine = create_engine(connection_string)
 
         result = pd.read_sql_query(query, engine)

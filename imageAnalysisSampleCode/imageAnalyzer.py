@@ -4,12 +4,14 @@ from dotenv import load_dotenv
 from azure.storage.blob import BlobServiceClient
 from openai import AzureOpenAI
 
-# Load environment variables from the .env file
-load_dotenv()
+# Load environment variables from the .env file and overwrite existing ones
+load_dotenv(override=True)
 
 # Set up Azure Blob Storage connection using the connection string from environment variables
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 container_name = os.getenv("AZIRE_STORAGE_CONTAINER")
+print(f"Container name: {container_name}")
+print(f"Connection string: {connection_string}")
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
 # Set up Azure OpenAI client using credentials from environment variables

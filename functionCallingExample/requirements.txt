@@ -1,0 +1,20 @@
+semantic-kernel
+python-dotenv
+azure-core
+azure-search
+# azure-search-documents
+azure-identity
+tenacity
+azure-search-documents==11.6.0b4
+numpy
+pandas
+plotly
+streamlit
+openai
+SQLAlchemy
+pyarrow
+scikit-learn
+pmdarima
+matplotlib
+pyodbc
+azure-cosmos

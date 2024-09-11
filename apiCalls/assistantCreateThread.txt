@@ -1,0 +1,22 @@
+POST
+
+https://{mySubdomain}.openai.azure.com/openai/threads/runs?api-version=2024-05-01-preview
+
+HEADERS:
+
+api-key    - Azure Openai API key
+
+BODY:
+
+{
+  "assistant_id": "<YOUR ASSISTANT ID HERE>",
+  "thread": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "summarize the feedback in test.json"
+      }
+    ]
+  }
+}
+

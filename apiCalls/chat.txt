@@ -1,0 +1,23 @@
+POST
+
+https://{mySubdomain}.openai.azure.com/openai/deployments/{deployment_id}/chat/completions?api-version=2024-02-01
+
+BODY:
+
+{
+  "temperature": 0.1,
+  "top_p": 0.1,
+  "stop": null,
+  "stream": false,
+    
+    "messages": [
+                {
+            "role": "user",
+            "content": "Give me a recipe for cocktails that use gin"
+        }
+    ]
+}
+
+HEADERS NEEDED:
+
+api-key        - Azure Openai API key

@@ -1,0 +1,44 @@
+POST
+
+https://{mySubdomain}.openai.azure.com/openai/deployments/{deployment_id}/chat/completions?api-version=2024-02-01
+
+{
+  "temperature": 0.1,
+  "top_p": 0.1,
+  "stop": null,
+  "stream": false,
+    "data_sources": [
+        {
+            "type": "azure_search",
+            "parameters": {
+                "endpoint": "<AI SEARCH URL HERE>",
+                "authentication": {
+                    "key": "<AI SEARCH KEY HERE>",
+                    "type": "api_key"
+                    },
+                "index_name": "<INDEX NAME HERE>",
+        "strictness": 3,
+                    "query_type": "vector_simple_hybrid",
+                    "semantic_configuration": "<SEMANTIC CONFIG HERE>",
+            "embedding_dependency": {
+              "type": "deployment_name",
+              "deployment_name": "<EMBEDDING DEPLOYMENT NAME HERE>"
+            },
+             "fields_mapping": {
+              "filepath_field": "category",
+              "title_field": "sourcepage"            },
+
+            "in_scope": true,
+            "filter": "",
+            "top_n_documents": 2,
+            "role_information": "<SYSTEM PROMPT HERE>"
+            }
+        }
+    ],
+    "messages": [
+                {
+            "role": "user",
+            "content": "<USER PROMPT HERE>"
+        }
+    ]
+}

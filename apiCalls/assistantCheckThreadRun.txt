@@ -1,0 +1,6 @@
+POST
+
+https://{mySubdomain}.openai.azure.com/openai/threads/{thread_id}/runs?api-version=2024-02-15-preview
+
+
+

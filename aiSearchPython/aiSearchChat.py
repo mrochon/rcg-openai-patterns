@@ -26,18 +26,6 @@ embedding_model_name = os.environ["AZURE_OPENAI_EMBEDDING_MODEL_NAME"]
 gpt_model_name = os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"]
 azure_openai_api_version = os.environ["AZURE_OPENAI_API_VERSION"]
 
-# print all environment variables
-print("Service Endpoint: ", service_endpoint)
-print("Credential: ", credential)
-print("Index Name: ", index_name)
-print("Azure OpenAI Endpoint: ", azure_openai_endpoint)
-print("Azure OpenAI Key: ", azure_openai_key)
-print("Azure OpenAI Embedding Deployment: ", azure_openai_embedding_deployment)
-print("Embedding Model Name: ", embedding_model_name)
-print("GPT Model Name: ", gpt_model_name)
-print("Azure OpenAI API Version: ", azure_openai_api_version)
-
-
 # Configure OpenAI environment variables
 client = AzureOpenAI(
     azure_endpoint=azure_openai_endpoint,  # The base URL for your Azure OpenAI resource. e.g. "https://<your resource name>.openai.azure.com"

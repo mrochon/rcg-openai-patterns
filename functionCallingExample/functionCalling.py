@@ -139,7 +139,11 @@ def run_conversation(aadObjectId, user_message):
         tools=mytools,
         tool_choice="auto",  # auto is default, but we'll be explicit
     )
-
+    print("----------------")
+    print("----------------")
+    print(response)
+    print("----------------")
+    print("----------------")
     # print(response)
     response_message = response.choices[0].message
     tool_calls = (

@@ -104,7 +104,7 @@ def send_image_to_openai(image_path, system_prompt):
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "Image: "},
+                        {"type": "text", "text": "return only the product names in this picture"},
                         {
                             "type": "image_url",
                             "image_url": {

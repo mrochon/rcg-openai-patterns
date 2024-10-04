@@ -5,7 +5,8 @@ azure-search
 # azure-search-documents
 azure-identity
 tenacity
-azure-search-documents==11.4.0b8
+# azure-search-documents==11.4.0b8
+azure-search-documents==11.6.0b1
 numpy
 pandas
 plotly

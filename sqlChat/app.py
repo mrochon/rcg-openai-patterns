@@ -32,13 +32,7 @@ load_setting(
     "AZURE_OPENAI_ENDPOINT", "endpoint", "https://resourcenamehere.openai.azure.com/"
 )
 load_setting("AZURE_OPENAI_API_KEY", "apikey")
-# load_setting("SNOW_ACCOUNT", "snowaccount")
-# load_setting("SNOW_USER", "snowuser")
-# load_setting("SNOW_PASSWORD", "snowpassword")
-# load_setting("SNOW_ROLE", "snowrole")
-# load_setting("SNOW_DATABASE", "snowdatabase")
-# load_setting("SNOW_SCHEMA", "snowschema")
-# load_setting("SNOW_WAREHOUSE", "snowwarehouse")
+
 
 if "show_settings" not in st.session_state:
     st.session_state["show_settings"] = False
@@ -134,15 +128,14 @@ with st.sidebar:
     )
     if index == 0:
         system_message = """
-        You are an agent designed to interact with a Microsoft SQL with schema detail in Microsoft SQL.
-        Given an input question, create a syntactically correct Microsoft SQL query to run, then look at the results of the query and return the answer.
+        You are an agent designed to interact with a Microsoft SQL Server with schema detail in Microsoft SQL Server.
+        Given an input question, create a syntactically correct Microsoft SQL Server query to run, then look at the results of the query and return the answer.
         You can order the results by a relevant column to return the most interesting data in the database.
         Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
         You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
         The data is for a single database called SampleDB.
         DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
         Remember to format SQL query as in ```sql\n SQL QUERY HERE ``` in your response.
-
         """
         few_shot_examples = ""
         extract_patterns = [("sql", r"```sql\n(.*?)```")]
@@ -175,7 +168,6 @@ with st.sidebar:
             - Never use print(). User don't see anything with print()
         5. Lastly, don't forget to deal with data quality problem. You should apply data imputation technique to deal with missing data or NAN data.
         6. Always follow the flow of Thought: , Observation:, Action: and Answer: as in template below strictly. 
-
         """
 
         few_shot_examples = """

@@ -166,6 +166,7 @@ cython_debug/
 zNotes.txt
 env.json
 **/zNotes.txt
+**/zNotes.py
 **/env.json
 
 bingSearch/

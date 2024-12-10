@@ -1,0 +1,13 @@
+numpy
+pandas
+python-dotenv
+azure-core
+azure-storage-blob
+openai
+SQLAlchemy
+scikit-learn
+pyodbc
+tabulate
+azure-identity 
+PyPDF2
+tenacity

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.30.23.60470",
+      "templateHash": "18309055955847587870"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The resource group location"
+      }
+    }
+  },
+  "variables": {
+    "baseName": "openaiarektest",
+    "openaiName": "[format('oai-{0}', variables('baseName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2024-06-01-preview",
+      "name": "[format('{0}/{1}', variables('openaiName'), 'modelnamehere')]",
+      "sku": {
+        "name": "Standard",
+        "capacity": 25
+      },
+      "properties": {
+        "model": {
+          "format": "OpenAI",
+          "name": "gpt-4o-mini",
+          "version": "2024-07-18"
+        },
+        "versionUpgradeOption": "NoAutoUpgrade"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', variables('openaiName'))]"
+      ],
+      "metadata": {
+        "description": "Add a gpt-3.5 turbo deployment."
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2024-06-01-preview",
+      "name": "[variables('openaiName')]",
+      "location": "[parameters('location')]",
+      "kind": "OpenAI",
+      "properties": {
+        "customSubDomainName": "[format('oai{0}', variables('baseName'))]",
+        "publicNetworkAccess": "Disabled",
+        "networkAcls": {
+          "defaultAction": "Deny"
+        },
+        "disableLocalAuth": true,
+        "restrictOutboundNetworkAccess": true,
+        "allowedFqdnList": []
+      },
+      "sku": {
+        "name": "S0"
+      }
+    }
+  ],
+  "outputs": {
+    "openAiResourceName": {
+      "type": "string",
+      "value": "[variables('openaiName')]"
+    }
+  }
+}

@@ -19,14 +19,11 @@ deployment = os.getenv("DEPLOYMENT")
 bot_type = os.getenv("BOT_TYPE")
 system_prompt_id = os.getenv("SYSTEM_PROMPT_ID", "default_value")
 
-
 client = AzureOpenAI(
     azure_endpoint=azure_endpoint,
     api_key=api_key,
     api_version=api_version,
 )
-
-app = func.FunctionApp()
 
 
 def get_good_emails(howMany=1, file_path="./emailsGood.jsonl"):
@@ -50,36 +47,12 @@ def get_bad_emails(howMany=1, file_path="./emailsBad.jsonl"):
     selected_contents = [email["content"][0] for email in selected_emails]
     return json.dumps({"badEmails": selected_contents})
 
-cosmos_prompt_query = (
-    f"SELECT c.systemPromptText FROM c WHERE c.systemPromptId = '{system_prompt_id}'"
-)
 
-@app.route(route="chat", auth_level=func.AuthLevel.FUNCTION)
-@app.cosmos_db_input(
-    arg_name="systemPrompts",
-    database_name="systemPromptsDb",
-    container_name="systemPromptsContainer",
-    connection="CosmosDBConnection",
-    sql_query=cosmos_prompt_query,
-)
-@app.cosmos_db_input(
-    arg_name="conversationHistory",
-    database_name="chatHistoryDb",
-    container_name="chatHistoryContainer",
-    connection="CosmosDBConnection",
-    sql_query="SELECT * FROM c WHERE c.aadObjectId = @aadObjectId ORDER BY c._ts DESC OFFSET 0 LIMIT 3",
-)
-@app.cosmos_db_output(
-    arg_name="conversationOutput",
-    database_name="chatHistoryDb",
-    container_name="chatHistoryContainer",
-    connection="CosmosDBConnection",
-)
-def chat(
+def main(
     req: func.HttpRequest,
-    systemPrompts: func.DocumentList,
     conversationHistory: func.DocumentList,
-    conversationOutput: func.Out[func.Document],  # Corrected type annotation
+    systemPrompts: func.DocumentList,
+    conversationOutput: func.Out[func.Document],
 ) -> func.HttpResponse:
     logging.info("Processing chat request.")
 
@@ -140,7 +113,7 @@ def chat(
         # Handle tool calls
         if tool_calls:
             available_functions = {
-                "get_good_emails": get_good_emails,
+                "get_good_emails": get_good_emels,
                 "get_bad_emails": get_bad_emails,
             }
             messages.append(response_message)

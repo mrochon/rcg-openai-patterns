@@ -1,0 +1,44 @@
+{
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "route": "chat/{aadObjectId}",
+      "methods": ["post"]
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "in",
+      "name": "conversationHistory",
+      "databaseName": "chatHistoryDb",
+      "containerName": "chatHistoryContainer",
+      "sqlQuery": "SELECT * FROM c WHERE c.aadObjectId = {aadObjectId} ORDER BY c._ts DESC OFFSET 0 LIMIT 3",
+      "connectionStringSetting": "CosmosDBConnection",
+      "partitionKey": "{aadObjectId}"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "in",
+      "name": "systemPrompts",
+      "databaseName": "systemPromptsDb",
+      "containerName": "systemPromptsContainer",
+      "sqlQuery": "SELECT c.systemPromptText FROM c WHERE c.systemPromptId = '1'",
+      "connectionStringSetting": "CosmosDBConnection"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "out",
+      "name": "conversationOutput",
+      "databaseName": "chatHistoryDb",
+      "containerName": "chatHistoryContainer",
+      "connectionStringSetting": "CosmosDBConnection"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    }
+  ]
+}

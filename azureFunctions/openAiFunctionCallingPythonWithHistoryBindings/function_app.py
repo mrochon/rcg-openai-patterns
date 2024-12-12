@@ -16,6 +16,9 @@ azure_endpoint = os.getenv("AZURE_ENDPOINT")
 api_key = os.getenv("API_KEY")
 api_version = os.getenv("API_VERSION")
 deployment = os.getenv("DEPLOYMENT")
+bot_type = os.getenv("BOT_TYPE")
+system_prompt_id = os.getenv("SYSTEM_PROMPT_ID", "default_value")
+
 
 client = AzureOpenAI(
     azure_endpoint=azure_endpoint,
@@ -47,12 +50,9 @@ def get_bad_emails(howMany=1, file_path="./emailsBad.jsonl"):
     selected_contents = [email["content"][0] for email in selected_emails]
     return json.dumps({"badEmails": selected_contents})
 
-
-def read_system_prompt(file_path="systemPrompt.txt"):
-    """Read the system prompt from a file."""
-    with open(file_path, "r") as file:
-        return file.read().strip()
-
+cosmos_prompt_query = (
+    f"SELECT c.systemPromptText FROM c WHERE c.systemPromptId = '{system_prompt_id}'"
+)
 
 @app.route(route="chat", auth_level=func.AuthLevel.FUNCTION)
 @app.cosmos_db_input(
@@ -60,7 +60,7 @@ def read_system_prompt(file_path="systemPrompt.txt"):
     database_name="systemPromptsDb",
     container_name="systemPromptsContainer",
     connection="CosmosDBConnection",
-    sql_query="SELECT c.systemPromptText FROM c WHERE c.systemPromptId = '1'",
+    sql_query=cosmos_prompt_query,
 )
 @app.cosmos_db_input(
     arg_name="conversationHistory",

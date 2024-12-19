@@ -50,4 +50,21 @@ mytools = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_customer_segments",
+            "description": "this function will return the definition of customer segments",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "CustomerSegment": {
+                        "type": "string",
+                        "description": "Allowed values are: 'High Potential', 'Low Potential', 'High Risk'",
+                    },
+                },
+                "required": ["symbol"],
+            },
+        },
+    },
 ]

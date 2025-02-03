@@ -1,25 +1,22 @@
 import openai
-import string
-import ast
+
 from datetime import timedelta
 import os
 import pandas as pd
 import numpy as np
-import random
 from urllib import parse
 import re
-import json
 from sqlalchemy import create_engine
 import sqlalchemy as sql
 from plotly.graph_objects import Figure
 import time
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 db_name = os.getenv("DB_NAME")
 db_connection = os.getenv("CONNECTION_STRING")
-
+db_schema = os.getenv("DB_SCHEMA")
 
 def get_table_schema(sql_query_tool, db_schema=None):
     # Define the SQL query to retrieve table and column information
@@ -412,6 +409,3 @@ class AnalyzeGPT(ChatGPT_Handler):
                 st.write(
                     "Cannot handle the question, please change the question and try again"
                 )
-
-
-# how many total deaths were there from covid?

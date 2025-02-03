@@ -133,7 +133,7 @@ with st.sidebar:
         You can order the results by a relevant column to return the most interesting data in the database.
         Never query for all the columns from a specific table, only ask for a the few relevant columns given the question.
         You MUST double check your query before executing it. If you get an error while executing a query, rewrite the query and try again.
-        The data is for a single database called SampleDB.
+        The data is for a single database called SalesLT.
         DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
         Remember to format SQL query as in ```sql\n SQL QUERY HERE ``` in your response.
         """
@@ -144,13 +144,13 @@ with st.sidebar:
         faq_dict = {
             "ChatGPT": [
                 "How many total deaths were there from covid?",
-                "How many total deaths were there from covid for each state?",
-                "what state had the highest number of covid deaths?",
+                "How many total deaths were there from covid for each country?",
+                "what country had the highest number of covid deaths?",
             ],
             "GPT-4": [
                 "How many total deaths were there from covid?",
-                "How many total deaths were there from covid for each state?",
-                "what state had the highest number of covid deaths?",
+                "How many total deaths were there from covid for each country?",
+                "what country had the highest number of covid deaths?",
             ],
         }
 
@@ -217,14 +217,14 @@ with st.sidebar:
         extractor = ChatGPT_Handler(extract_patterns=extract_patterns)
         faq_dict = {
             "ChatGPT": [
-                "Show me daily revenue trends in 1996 per region",
-                "Is that true that top 20% customers generate 80% revenue from 1996 to 1998? What's their percentage of revenue contribution?",
-                "Which products have most seasonality in sales quantity in 1998?",
-                "Which customers are most likely to churn in 1997?",
+                "Show me daily COVID-19 vaccination trends per region.",
+                "Is it true that the top 20% of countries account for 80% of total vaccinations? What's their percentage of total vaccinations?",
+                "Which countries have the highest seasonality in new vaccinations?",
+                "Which countries experienced the highest death rate increase in 2021?",
             ],
             "GPT-4": [
-                "Predict monthly revenue for next 6 months starting from May-1998. Do not use Prophet.",
-                "What is the impact of discount on sales? What's optimal discount rate?",
+                "Predict monthly COVID-19 death counts for the next 6 months starting from January 2022. Do not use Prophet.",
+                "What is the impact of vaccination rate on COVID-19 death rate? What is the optimal vaccination threshold to reduce deaths?",
             ],
         }
 
@@ -308,13 +308,7 @@ with st.sidebar:
             or st.session_state.chatgpt == ""
         ):
             st.error("You need to specify Azure Open AI Deployment Settings!")
-        # elif (
-        #     st.session_state.snowaccount == ""
-        #     or st.session_state.snowuser == ""
-        #     or st.session_state.snowpassword == ""
-        #     or st.session_state.snowrole == ""
-        # ):
-        #     st.error("You need to specify Microsoft SQL Settings!")
+
         else:
             sql_query_tool = SQL_Query(
                 account_identifier="st.session_state.snowaccount",
